@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="dataSourceStorageLocal">
+    <data-source name="Oracle - @students.dce.ifmo.ru" uuid="d0e04b48-0487-4417-90bb-372ef340a72e">
+      <secret-storage>master_key</secret-storage>
+      <user-name>s191690</user-name>
+    </data-source>
+  </component>
+</project>
