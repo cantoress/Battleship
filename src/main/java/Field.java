@@ -1,3 +1,5 @@
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 /**
@@ -6,7 +8,7 @@ import java.util.Random;
 public class Field {
 
     private FieldCell[][] cellMap;
-    private Ship [] shipList;
+    private ArrayList<Ship> shipList;
 
     public Field() {
         cellMap = new FieldCell [10][10];
@@ -15,7 +17,7 @@ public class Field {
                 cellMap[j][i] = new FieldCell();
             }
         }
-        shipList = new Ship [10];
+        shipList = new ArrayList <Ship>();
     }
 
     public FieldCell[][] getCellMap() {
@@ -26,15 +28,15 @@ public class Field {
         this.cellMap = cellMap;
     }
 
-    public Ship[] getShipList() {
+    public ArrayList<Ship> getShipList() {
         return shipList;
     }
 
-    public void setShipList(Ship[] shipList) {
+    public void setShipList(ArrayList<Ship> shipList) {
         this.shipList = shipList;
     }
 
-    public void createNewField(){
+    public void createNewRandomField(){
 
         boolean success;
         int shipLength;
@@ -65,12 +67,12 @@ public class Field {
                 Ship ship = new Ship(1,xb,yb,xb,yb);
                 //System.out.println(ship.info());
                 if(ship.checkShipAround(cellMap)){
-                    cellMap[xb][yb].setHasNearShip(true);
+                    cellMap[xb][yb].setHasShip(true);
                     cellMap[xb][yb].setShip(ship);
                     ship.setNearAround(cellMap);
-                    shipList[i] = ship;
+                    shipList.add(ship);
                     success = true;
-                    System.out.println("добавлено");
+//                    System.out.println("добавлен единичный корабль");
                 }
             } else {
                 //Выбираем направление расположения корабля относительно начальной точки. Следим, чтобы корабль находился в пределах поля
@@ -108,10 +110,9 @@ public class Field {
                         if (!(cellMap[xb][yb+sign(mody)*j].isHasShip()&&cellMap[xb][yb+sign(mody)*j].getHasNearShip())) counter++;
                     }
                 }
-                System.out.println(counter);
+//                System.out.println(counter);
                 //Расставляем корабли
-                //!!!Проверить работу условия!
-                if(counter==shipLength){
+                if(counter==shipLength-1){
                     int xe = xb+modx;
                     int ye = yb+mody;
                     xb = Math.min(xb,xe);
@@ -129,9 +130,9 @@ public class Field {
                             cellMap[xe][ye].setShip(ship);
 
                             ship.setNearAround(cellMap);
-                            shipList[i] = ship;
+                            shipList.add(ship);
                             success = true;
-                            System.out.println("добавлено");
+//                            System.out.println("добавлен двойной корабль");
                         }
                     }
                     else if(shipLength==3){
@@ -139,10 +140,10 @@ public class Field {
                         //System.out.println(ship.info());
                         if(ship.checkShipAround(cellMap)){
                             cellMap[xb][yb].setHasShip(true);
-                            cellMap[xe][yb].setHasShip(true);
+                            cellMap[xe][ye].setHasShip(true);
 
                             cellMap[xb][yb].setShip(ship);
-                            cellMap[xe][yb].setShip(ship);
+                            cellMap[xe][ye].setShip(ship);
 
                             if (side=='x'){
                                 cellMap[xb+1][yb].setHasShip(true);
@@ -152,19 +153,19 @@ public class Field {
                                 cellMap[xb][yb+1].setShip(ship);
                             }
                             ship.setNearAround(cellMap);
-                            shipList[i] = ship;
+                            shipList.add(ship);
                             success = true;
-                            System.out.println("добавлено");
+//                            System.out.println("добавлен тройной корабль");
                         }
                     } else{
                         Ship ship = new Ship(4,xb,yb,xe,ye);
                         //System.out.println(ship.info());
                         if(ship.checkShipAround(cellMap)){
                             cellMap[xb][yb].setHasShip(true);
-                            cellMap[xe][yb].setHasShip(true);
+                            cellMap[xe][ye].setHasShip(true);
 
                             cellMap[xb][yb].setShip(ship);
-                            cellMap[xe][yb].setShip(ship);
+                            cellMap[xe][ye].setShip(ship);
 
                         if (side=='x'){
                             cellMap[xb+1][yb].setHasShip(true);
@@ -172,8 +173,7 @@ public class Field {
 
                             cellMap[xb+1][yb].setShip(ship);
                             cellMap[xb+2][yb].setShip(ship);
-                        }else{
-
+                        }else {
                             cellMap[xb][yb+1].setHasShip(true);
                             cellMap[xb][yb+2].setHasShip(true);
 
@@ -181,17 +181,28 @@ public class Field {
                             cellMap[xb][yb+2].setShip(ship);
                         }
                             ship.setNearAround(cellMap);
-                            shipList[i] = ship;
+                            shipList.add(ship);
                             success = true;
-                            System.out.println("добавлено");
+//                            System.out.println("добавлен четверной корабль");
 
                         }
                     }
                 }
 
             }
-            System.out.println(success);
-            if(success){i++;}
+//            System.out.println(success);
+            if(success){
+//                System.out.println(i);
+                i++;
+//                for(int k = 0;k<10;k++){
+//                    for(int j = 0; j<10;j++){
+//                        if(cellMap[j][k].isHasShip()) {System.out.print("0");}
+//                        else if(cellMap[j][k].getHasNearShip()) {System.out.print("!");}
+//                        else {System.out.print("*");}
+//                    }
+//                    System.out.println();
+//                }
+            }
         }
 
     }
@@ -201,7 +212,7 @@ public class Field {
     * @param x число
     * @return знак числа
     */
-    public int sign(int x) {
+    private int sign(int x) {
         if (x > 0)
             return 1;
         else if (x < 0)

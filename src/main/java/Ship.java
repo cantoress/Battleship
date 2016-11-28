@@ -4,11 +4,12 @@
 public class Ship {
 
     private int length;
-    private boolean [] parts;
+    private int parts;
     private int xb,yb, xe, ye;
 
     public Ship(int length, int xb, int yb, int xe, int ye) {
         this.length = length;
+        parts = length;
         this.xb = xb;
         this.yb = yb;
         this.xe = xe;
@@ -23,16 +24,16 @@ public class Ship {
         this.length = length;
     }
 
-    public boolean[] getParts() {
+    public int getParts() {
         return parts;
     }
 
-    public void setParts(boolean[] parts) {
+    public void setParts(int parts) {
         this.parts = parts;
     }
 
-    public void setPartDamaged(int i){
-        parts[i] = true;
+    public void setPartDamaged(){
+        parts--;
     }
 
     public int getXb() {
@@ -142,7 +143,7 @@ public class Ship {
     }
 
     /**
-     * Метод проверяет, если вокруг предполагаемого места для корабля клетки с кораблями
+     * Метод проверяет, если вокруг предполагаемого места для корабля есть клетки с кораблями
      * @param map поле игрока
      * @return есть или нет такие клетки
      */
