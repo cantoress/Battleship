@@ -93,7 +93,7 @@ public class Ship {
      */
     public void setCheckedAround(FieldCell [][] map){
         for(int i = xb-1;i<=xe+1;i++){
-            for(int j = yb-1;i<=ye+1;i++){
+            for(int j = yb-1;j<=ye+1;j++){
                 setCellChecked(map,i,j);
             }
         }

@@ -1,4 +1,5 @@
 import java.util.Random;
+import java.util.Scanner;
 
 /**
  * Created by cantoress on 23.11.2016.
@@ -9,15 +10,50 @@ public class GameProcess {
     public static Field playerField, computerField;
 
     public static void main(String [] args){
-
+        System.out.println("Your field");
         playerField = new Field();
         playerField.createNewRandomField();
         showField(playerField);
-
+        System.out.println("Fiend field");
         computerField = new Field();
         computerField.createNewRandomField();
         showField(computerField);
 
+
+        Scanner scanner = new Scanner(System.in);
+        while(canPlay(playerField)&&canPlay(computerField)){
+            System.out.println("Ваш ход. Введите координаты выстрела, используя латинские буквы и цифры");
+            String shoot = scanner.next();
+            if(shoot=="checkremain"){
+                System.out.println(computerField.getShipList().size());
+            }
+            String res = shoot(1,computerField,shoot);
+            System.out.println(res);
+            while(!res.contains("промазали")){
+                System.out.println("Ваш ход. Введите координаты выстрела, используя латинские буквы и цифры");
+                shoot = scanner.next();
+                res = shoot(1,computerField,shoot);
+                System.out.println(res);
+                showField(playerField);
+                System.out.println("Fiend field");
+                showField(computerField);
+            }
+            System.out.println("Ход противника!");
+            res = shoot(2,playerField,null);
+            System.out.println(res);
+            while(!res.contains("промазали")){
+                res = shoot(2,playerField,null);
+                System.out.println(res);
+            }
+            showField(playerField);
+            System.out.println("Fiend field");
+            showField(computerField);
+        }
+        if(canPlay(playerField)){
+            System.out.println("Вы выиграли!");
+        } else{
+            System.out.println("Вы проиграли!");
+        }
 
     }
 
@@ -39,10 +75,10 @@ public class GameProcess {
 
         if(ableToShoot(coord, field)){
             FieldCell cell = field.getCellMap()[coord/10][coord%10];
+            cell.setHasChecked(true);
             if(cell.isHasShip()){
                 Ship ship = cell.getShip();
                 ship.setPartDamaged();
-                cell.setHasChecked(true);
 
                 if(ship.getParts()==0){
                     ship.setCheckedAround(field.getCellMap());
@@ -69,7 +105,7 @@ public class GameProcess {
      */
     public static boolean ableToShoot(int coord, Field field){
 
-        return field.getCellMap()[coord/10][coord%10].isHasChecked();
+        return (!field.getCellMap()[coord/10][coord%10].isHasChecked());
 
     }
 
@@ -87,7 +123,7 @@ public class GameProcess {
     }
 
     /**
-     *  Обрабатывает ход, полученный от игрока в формате "буква-цифра" в ход, понятный программе
+     * Обрабатывает ход, полученный от игрока в формате "буква-цифра" в ход, понятный программе
      * @param data ход в виде строки
      * @return ход в виде числа
      */
@@ -104,10 +140,21 @@ public class GameProcess {
         if(chars.length ==3){
             y = 9;
         } else{
-            y = Character.getNumericValue(chars[1]);
+            y = Character.getNumericValue(chars[1])-1;
         }
 
         return x*10+y;
+    }
+
+    /**
+     * Проверяет поле на наличие кораблей
+     * @param field поле игрока, по которому стреляют
+     * @return правда - если по полю еще можно стрелять (есть корабли)
+     */
+    public static boolean canPlay(Field field) {
+
+        return(!field.getShipList().isEmpty());
+
     }
 
     /**
@@ -119,7 +166,8 @@ public class GameProcess {
 
         for(int i = 0;i<10;i++){
             for(int j = 0; j<10;j++){
-                if(field.getCellMap()[j][i].isHasShip()) {System.out.print("0");}
+                if(field.getCellMap()[j][i].isHasChecked()){System.out.print("A");}
+                else if(field.getCellMap()[j][i].isHasShip()) {System.out.print("0");}
                 else if(field.getCellMap()[j][i].getHasNearShip()) {System.out.print("!");}
                 else {System.out.print("*");}
             }

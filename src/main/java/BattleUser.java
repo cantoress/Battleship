@@ -1,14 +1,37 @@
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
+
 /**
  * Class for user's identity
  * Created by cantoress on 20.11.2016.
  */
+
+@Entity
+@Table(name = "BATTLE_USERS")
 public class BattleUser {
 
+    @Id
+    @Column(name = "ID")
+    @GeneratedValue
     private int id;
+
+    @Column(name = "LOGIN")
     private String login;
+
+    @Column(name = "PASSWORD")
     private String password;
+
+    @Column(name = "GAMES_PLAYED")
     private int games_played;
+
+    @Column(name = "GAMES_WON")
     private int games_won;
+
+    @Column(name = "STATUS")
     private String status;
 
 
