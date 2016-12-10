@@ -1,0 +1,63 @@
+.container{
+    /*width:1200px;*/
+    text-align:center;
+    margin:0;
+    padding:0;
+}
+
+.field{
+    padding: 0 100px;
+}
+
+caption{
+    padding-bottom: 20px;
+}
+
+.my-field{
+    float:left;
+}
+.enemy-field{
+    float:right;
+}
+
+.field-table{
+    border: 1px solid black;
+    border-collapse:collapse;
+    width:330px;
+}
+
+.field-table td{
+    width:30px;
+    height:30px;
+    border: 1px solid black;
+}
+
+.shoot-form{
+    text-align: center;
+    clear:both;
+    /*padding-left: 0px;*/
+}
+
+.empty{
+    background-color: green;
+}
+
+.has-ship{
+    background-color: red;
+}
+
+.checked{
+    background-color: navy;
+}
+
+.has-ship.checked{
+    background-color: black;
+}
+
+.hidden{
+    display: none;
+}
+
+.enemy{
+    background-color: crimson;
+}

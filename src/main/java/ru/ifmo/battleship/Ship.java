@@ -1,3 +1,5 @@
+package ru.ifmo.battleship;
+
 /**
  * Created by cantoress on 21.11.2016.
  */

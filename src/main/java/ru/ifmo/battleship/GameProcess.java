@@ -1,5 +1,6 @@
+package ru.ifmo.battleship;
+
 import java.util.Random;
-import java.util.Scanner;
 
 /**
  * Created by cantoress on 23.11.2016.
@@ -7,59 +8,9 @@ import java.util.Scanner;
 public class GameProcess {
 
 
-    public static Field playerField, computerField;
-
-    public static void main(String [] args){
-        System.out.println("Your field");
-        playerField = new Field();
-        playerField.createNewRandomField();
-        showField(playerField);
-        System.out.println("Fiend field");
-        computerField = new Field();
-        computerField.createNewRandomField();
-        showField(computerField);
-
-
-        Scanner scanner = new Scanner(System.in);
-        while(canPlay(playerField)&&canPlay(computerField)){
-            System.out.println("Ваш ход. Введите координаты выстрела, используя латинские буквы и цифры");
-            String shoot = scanner.next();
-            if(shoot=="checkremain"){
-                System.out.println(computerField.getShipList().size());
-            }
-            String res = shoot(1,computerField,shoot);
-            System.out.println(res);
-            while(!res.contains("промазали")){
-                System.out.println("Ваш ход. Введите координаты выстрела, используя латинские буквы и цифры");
-                shoot = scanner.next();
-                res = shoot(1,computerField,shoot);
-                System.out.println(res);
-                showField(playerField);
-                System.out.println("Fiend field");
-                showField(computerField);
-            }
-            System.out.println("Ход противника!");
-            res = shoot(2,playerField,null);
-            System.out.println(res);
-            while(!res.contains("промазали")){
-                res = shoot(2,playerField,null);
-                System.out.println(res);
-            }
-            showField(playerField);
-            System.out.println("Fiend field");
-            showField(computerField);
-        }
-        if(canPlay(playerField)){
-            System.out.println("Вы выиграли!");
-        } else{
-            System.out.println("Вы проиграли!");
-        }
-
-    }
-
     /**
      * Функция реализует выстрел. Возвращаемая строка содержит информацию о результате выстрела
-     * @param player код игрока (1 - живой игрок, иначе - компьютер)
+     * @param player код игрока (1 - живой игрок, 0 - ход в виде цифр, иначе - компьютер)
      * @param field поле игрока, по которому стреляют
      * @param data информация о ходе (для живого игрока), для компьютера - null
      * @return информация о результате выстрела
@@ -69,6 +20,8 @@ public class GameProcess {
         int coord;
         if(player == 1){
             coord = getCoordsFromData(data);
+        }else if(player==0){
+            coord = Integer.valueOf(data);
         } else{
             coord = getRandomCoord();
         }
@@ -83,12 +36,17 @@ public class GameProcess {
                 if(ship.getParts()==0){
                     ship.setCheckedAround(field.getCellMap());
                     field.getShipList().remove(ship);
-                    return "Вы убили "+ship.info()+"! Продолжайте ходить!";
+                    if(player==1){ return "Вы убили "+ship.info()+"! Продолжайте ходить!";}
+                   else{ return "Компьютер убил "+ship.info()+"! Ход компьютера!";}
                 } else {
-                    return "Вы попали в корабль! Продолжайте ходить!";
+                    if(player==1){ return "Вы попали в корабль! Продолжайте ходить!";}
+                    else{ return "Компьютер попал в ваш корабль! Ход компьютера!";}
+
                 }
             } else{
-                return "Вы промазали! Ход переходит к противнику!";
+                if(player==1){ return "Вы промазали! Ход переходит к противнику!";}
+                else{ return "Компьютер промазал! Ход переходит к вам!";}
+
             }
 
         } else{
@@ -162,13 +120,32 @@ public class GameProcess {
      * @param field поле игрока/компьютера
      */
 
-    private static void showField(Field field){
+    public static void showField(Field field){
 
         for(int i = 0;i<10;i++){
             for(int j = 0; j<10;j++){
-                if(field.getCellMap()[j][i].isHasChecked()){System.out.print("A");}
+                if(field.getCellMap()[j][i].isHasChecked()&&field.getCellMap()[j][i].isHasShip()){System.out.print("E");}
+                else if(field.getCellMap()[j][i].isHasChecked()){System.out.print("A");}
                 else if(field.getCellMap()[j][i].isHasShip()) {System.out.print("0");}
                 else if(field.getCellMap()[j][i].getHasNearShip()) {System.out.print("!");}
+                else {System.out.print("*");}
+            }
+            System.out.println();
+        }
+
+    }
+
+    /**
+     * Вспомогательная функция, которая выводит поле в консоль, выводит только проверенные клетки
+     * @param field поле игрока/компьютера
+     */
+
+    public static void showCheckedField(Field field){
+
+        for(int i = 0;i<10;i++){
+            for(int j = 0; j<10;j++){
+                if(field.getCellMap()[j][i].isHasChecked()&&field.getCellMap()[j][i].isHasShip()){System.out.print("E");}
+                else if(field.getCellMap()[j][i].isHasChecked()){System.out.print("A");}
                 else {System.out.print("*");}
             }
             System.out.println();
