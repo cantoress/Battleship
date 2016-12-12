@@ -1,5 +1,7 @@
 package ru.ifmo.battleship;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -12,6 +14,9 @@ import java.util.Set;
  */
 @Controller
 public class GameController {
+
+//    private static Logger logger = LoggerFactory.getLogger(GameController.class);
+
     private static Field playerField, computerField;
     private static GameProcess game;
 

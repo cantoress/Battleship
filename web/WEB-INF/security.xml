@@ -1,0 +1,45 @@
+<beans:beans xmlns="http://www.springframework.org/schema/security"
+             xmlns:beans="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xmlns:context="http://www.springframework.org/schema/context"
+             xsi:schemaLocation="http://www.springframework.org/schema/beans
+                http://www.springframework.org/schema/beans/spring-beans.xsd
+                http://www.springframework.org/schema/security
+                http://www.springframework.org/schema/security/spring-security.xsd
+                http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <context:component-scan  base-package="ru.ifmo.battleship"/>
+
+
+    <http>
+        <intercept-url pattern="/game" access="ROLE_USER" />
+        <intercept-url pattern="/game/play" access="ROLE_USER" />
+        <intercept-url pattern="/game/shoot" access="ROLE_USER" />
+        <form-login login-page="/login.jsp" default-target-url="/game"
+                    authentication-failure-url="/error403.jsp" />
+        <logout logout-url="/logout" logout-success-url="/game" />
+        <anonymous username="guest" granted-authority="ROLE_ANONYMOUS" />
+    </http>
+
+    <!--<authentication-manager>-->
+        <!--&lt;!&ndash;<authentication-provider user-service-ref="UserDetailsServiceImpl" >&ndash;&gt;-->
+        <!--<authentication-provider>-->
+            <!--<user-service>-->
+                <!--<user name="u" password="u" authorities="ROLE_ADMIN,ROLE_USER" />-->
+                <!--<user name="admin" password="admin" authorities="ROLE_ADMIN,ROLE_USER" />-->
+                <!--<user name="user1" password="user1" authorities="ROLE_USER" />-->
+                <!--<user name="user2" password="user2" disabled="true" authorities="ROLE_USER" />-->
+            <!--</user-service>-->
+        <!--</authentication-provider>-->
+    <!--</authentication-manager>-->
+    <authentication-manager>
+        <authentication-provider>
+            <jdbc-user-service data-source-ref="dataSource"
+                               users-by-username-query="select username, password, enabled
+                                                       from BATTLEUSERS where username = ?"
+                               authorities-by-username-query="select u.username, au.authority
+                                                             from BATTLEUSERS u, authorities au
+                                                            where u.id = au.users_id and u.username = ?" />
+        </authentication-provider>
+    </authentication-manager>
+
+</beans:beans>

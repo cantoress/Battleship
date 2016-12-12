@@ -38,12 +38,14 @@ caption{
     /*padding-left: 0px;*/
 }
 
-.empty{
-    background-color: green;
-}
+
 
 .has-ship{
     background-color: red;
+}
+
+.empty{
+    background-color: green;
 }
 
 .checked{
@@ -60,4 +62,16 @@ caption{
 
 .enemy{
     background-color: crimson;
+}
+
+.enemy-field tr:nth-child(n+2) td:not(.checked):nth-child(n+2):hover{
+    cursor: pointer;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-image: url("/resources/target.png");
+    background-size: cover;
+}
+
+#game-info>div{
+    font-size:18px;
 }

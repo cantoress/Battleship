@@ -1,8 +1,7 @@
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
+package ru.ifmo.battleship;
+
+import javax.persistence.*;
+import java.io.Serializable;
 
 
 /**
@@ -11,12 +10,12 @@ import javax.persistence.Table;
  */
 
 @Entity
-@Table(name = "BATTLE_USERS")
-public class BattleUser {
+@Table(name = "BATTLEUSER")
+public class BattleUser implements Serializable{
 
     @Id
     @Column(name = "ID")
-    @GeneratedValue
+    @GeneratedValue(strategy= GenerationType.IDENTITY)
     private int id;
 
     @Column(name = "LOGIN")
@@ -31,8 +30,6 @@ public class BattleUser {
     @Column(name = "GAMES_WON")
     private int games_won;
 
-    @Column(name = "STATUS")
-    private String status;
 
 
     public int getGames_played() {
@@ -75,11 +72,4 @@ public class BattleUser {
         this.games_won = games_won;
     }
 
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
 }
