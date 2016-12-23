@@ -52,3 +52,4 @@ target/
 out/
 src/test/
 META-INF/
+/src/main/resources/jdbc.properties

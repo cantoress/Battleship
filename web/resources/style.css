@@ -73,5 +73,16 @@ caption{
 }
 
 #game-info>div{
+    color: red;
     font-size:18px;
+}
+
+.log-table{
+    border-collapse: collapse;
+    width:500px;
+}
+
+.log-table td, .log-table th{
+    border: 1px solid black;
+    text-align: center;
 }

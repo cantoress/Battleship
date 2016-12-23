@@ -1,13 +1,15 @@
 package ru.ifmo.battleship;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.GenericXmlApplicationContext;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.context.support.WebApplicationContextUtils;
 
-import java.util.HashSet;
-import java.util.Random;
-import java.util.Set;
+import javax.servlet.ServletContext;
+import java.util.*;
 
 /**
  * Created by cantoress on 04.12.2016.
@@ -15,15 +17,27 @@ import java.util.Set;
 @Controller
 public class GameController {
 
-//    private static Logger logger = LoggerFactory.getLogger(GameController.class);
+    final String [] first =  {"a", "b", "c", "d", "e", "f", "g", "h", "i", "j"};
 
     private static Field playerField, computerField;
     private static GameProcess game;
+    private static int gamenum;
+
+    @Autowired
+    private LogDao dao;
+
+
 
     @RequestMapping(value = "/game/play", method = RequestMethod.GET)
     @ResponseBody
-    public Set<ConvertionToJSON> createFields() {
-        Set<ConvertionToJSON> records = new HashSet<ConvertionToJSON>();
+    public List<ConvertionToJSON> createFields() {
+        List<ConvertionToJSON> records = new ArrayList<ConvertionToJSON>();
+
+//        ServletContext servletContext = getServletContext();
+//        ApplicationContext ctx = WebApplicationContextUtils.getWebApplicationContext(servletContext);
+//
+//
+//         dao = ctx.getBean("logBean", LogDao.class);
 
 //        game = new GameProcess();
         playerField = new Field();
@@ -36,12 +50,36 @@ public class GameController {
         records.addAll(addAllToJSON(playerField,0));
         records.addAll(addAllToJSON(computerField,1));
 
+
         return records;
     }
 
     @RequestMapping("/game")
     public void home() {
 
+    }
+
+    @RequestMapping("/info")
+    public void home2() {
+
+    }
+
+    @RequestMapping(value = "/game/del", method = RequestMethod.GET)
+    public void deletegame(@RequestParam(value = "game") int game){
+        dao.delete(game);
+    }
+
+    @RequestMapping(value = "/info/log", method=RequestMethod.GET)
+    @ResponseBody
+    public List<LogInfo> playerShoot(@RequestParam(value = "game") int game){
+        return dao.findGame(game);
+    }
+
+    @RequestMapping(value = "/gamenum", method = RequestMethod.GET)
+    @ResponseBody
+    public int getGamenum() {
+        gamenum = dao.gamecount()+1;
+        return gamenum;
     }
 
     @RequestMapping("/")
@@ -52,30 +90,39 @@ public class GameController {
 
     @RequestMapping(value = "/game/shoot", method=RequestMethod.GET)
     @ResponseBody
-    public Set<ConvertionToJSON> playerShoot(@RequestParam(value = "turn") String turn){
-        Set<ConvertionToJSON> records = new HashSet<ConvertionToJSON>();
+    public List<ConvertionToJSON> playerShoot(@RequestParam(value = "turn") String turn){
+        List<ConvertionToJSON> records = new ArrayList<ConvertionToJSON>();
+
 
         records.addAll(shoot(1,computerField,turn));
+        if(records.get(0).getCoord()!=-1) {
+            dao.add(fromShootToLog(records.get(0), 1, gamenum, records.size()));
+        }
+        System.out.println(dao.findAll());
 
         return records;
     }
 
     @RequestMapping(value = "/game/compshoot", method=RequestMethod.GET)
     @ResponseBody
-    public Set<ConvertionToJSON> compShoot(){
-        Set<ConvertionToJSON> records = new HashSet<ConvertionToJSON>();
+    public List<ConvertionToJSON> compShoot(){
+        List<ConvertionToJSON> records = new ArrayList<ConvertionToJSON>();
 
         Random random = new Random();
         String turn = String.valueOf(random.nextInt(99));
 
         records.addAll(shoot(0,playerField,turn));
+        if(records.get(0).getCoord()!=-1) {
+            dao.add(fromShootToLog(records.get(0), 0, gamenum, records.size()));
+        }
+        System.out.println(dao.findAll());
 
         return records;
     }
 
-    private static Set <ConvertionToJSON> shoot(int num,Field field, String turn){
+    private static List <ConvertionToJSON> shoot(int num,Field field, String turn){
 
-        Set<ConvertionToJSON> records = new HashSet<ConvertionToJSON>();
+        List<ConvertionToJSON> records = new ArrayList<ConvertionToJSON>();
         int turnInt;
         if(num==1){
             turnInt = game.getCoordsFromData(turn);
@@ -178,6 +225,35 @@ public class GameController {
         return answer;
     }
 
+    private LogInfo fromShootToLog(ConvertionToJSON json, int player, int game, int size){
 
+        LogInfo log = new LogInfo();
+
+        log.setId(dao.idcount()+1);
+        log.setGameNum(game);
+        if(player==1){
+            log.setPlayer("player");
+        } else{
+            log.setPlayer("computer");
+        }
+        //Change to literal shoot
+        int coord = json.getCoord()%100;
+        String res = first[coord/10]+Integer.toString((coord%10)+1);
+        log.setShoot(res);
+
+        int act = json.getAction();
+        String shootresult = "";
+        if(size>1){
+            shootresult = "killed";
+        }
+        else if(act==1){
+            shootresult = "got";
+        } else{
+            shootresult = "empty";
+        }
+        log.setShootResult(shootresult);
+
+        return log;
+    }
 
 }

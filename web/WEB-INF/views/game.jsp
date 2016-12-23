@@ -9,6 +9,9 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
 <script>
 
+    var gamenum;
+    var status;
+
     function checkshow(){
         $(document).ready(function () {
             $('#needshow').click(function () {
@@ -38,6 +41,14 @@
     function create() {
         $(document).ready(function () {
             $('#but').click(function () {
+                if(status=="newgame"){
+                    increaseGame();
+                    status = "game";
+                } else if (status = "game"){
+                    deleteGame(gamenum);
+//                    increaseGame();
+                    status = "game";
+                }
                 if(document.getElementById('needshow').checked){
                     document.querySelectorAll('.enemy-field')[0].classList.add('show');
                 } else{
@@ -59,6 +70,21 @@
             });
         });
 
+        $.get("/gamenum", function (data) {
+            $("#gamen").empty();
+            gamenum = data;
+            $("<div id = 'gamen'>Game " + gamenum + "</div>").appendTo("#header");
+        });
+
+    }
+
+    function deleteGame(thisgame){
+        $.ajax({
+            method: "GET",
+            url: "/game/del",
+            dataType: 'json',
+            data: {game: thisgame}
+        });
     }
 
     function shoot(){
@@ -67,7 +93,6 @@
             $("#shoot").click(function () {
                 makeshoot($('#shoottext').val());
             });
-
 
             $('[id^="td"]').click(function () {
                 var name = this.id;
@@ -110,16 +135,15 @@
                 if(res == "change"){
                     $("#game-info").empty();
                     $("<div>Computer's turn!</div>").appendTo("#game-info");
-//                    alert("Computer's turn!");
-                    compshoot();
+                    setTimeout(compshoot(), 500);
                 } else if(res == "player"){
                     $("#game-info").empty();
                     $("<div>You won!</div>").appendTo("#game-info");
-//                    alert("You won!");
+                    status = "newgame";
                 } else if(res == "comp"){
                     $("#game-info").empty();
                     $("<div>You lose!</div>").appendTo("#game-info");
-//                    alert("You lose!");
+                    status = "newgame";
                 }
             }
         });
@@ -145,7 +169,6 @@
                 } else if(stat ==-2){
                     res = "comp";
                 }
-//                            alert(res);
             });
             if(res == "change"){
                 setTimeout($("#game-info").empty(),1000);
@@ -153,13 +176,27 @@
             } else if(res == "player"){
                 $("#game-info").empty();
                 $("<div>You won!</div>").appendTo("#game-info");
-//                alert("You won!");
+                status = "newgame";
             } else if(res == "comp"){
                 $("#game-info").empty();
                 $("<div>You lose!</div>").appendTo("#game-info");
-//                alert("You lose!");
+                status = "newgame";
             } else{
                 setTimeout('compshoot()',1000);
+            }
+        });
+    }
+
+    function increaseGame(){
+        $.ajax({
+            method: "GET",
+            url: "/gamenum",
+//            dataType: 'json',
+//            data: {user: winner},
+            success: function (data) {
+                $("#gamen").empty();
+                gamenum = data;
+                $("<div id = 'gamen'>Game " + gamenum + "</div>").appendTo("#header");
             }
         });
     }
@@ -216,7 +253,8 @@
     }
 
 </script>
-    <h1 align="center">Battleship</h1>
+    <h1 align="center" id = "header">Battleship</h1>
+    <a href = "/info" align = "left">To log</a>
     <div class = "container">
         <button id = "but">Play</button>
         <form>
@@ -529,6 +567,15 @@
             </form>
         </div>
     </div>
-
+<script>
+//    function start() {
+//        $(document).ready(function () {
+//            $.get("/game", function (data) {
+//                gamenum = data.get();
+//                $("<div>Game number " + gamenum + "</div>").appendTo("#header");
+//            });
+//        });
+//    }
+</script>
 </body>
 </html>

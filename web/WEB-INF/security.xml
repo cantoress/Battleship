@@ -13,6 +13,9 @@
     <http>
         <intercept-url pattern="/game" access="ROLE_USER" />
         <intercept-url pattern="/game/play" access="ROLE_USER" />
+        <intercept-url pattern="/gamedel" access="ROLE_USER" />
+        <intercept-url pattern="/gamenum" access="ROLE_USER" />
+        <intercept-url pattern="/info" access="ROLE_ADMIN" />
         <intercept-url pattern="/game/shoot" access="ROLE_USER" />
         <form-login login-page="/login.jsp" default-target-url="/game"
                     authentication-failure-url="/error403.jsp" />
